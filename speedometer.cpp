@@ -8,12 +8,13 @@ DigitalOut flash(LED4);
 Timer t;
 int time1 = 0;
 int time2 = 0;
- 
+bool timeFlag = false;
+
 void recordTime() {
     time2 = time1;
     time1 = t.read_ms();
     
-    if (time1 > 1620000){
+    if (time1 > 1620000){  //As timer can't go over roughly 34 minutes we reset it
         t.stop();
         t.reset();
         t.start();
@@ -22,6 +23,9 @@ void recordTime() {
     }
 }
 
+void changeFlag(){
+    timeFlag = true;
+}
 
 int calculateVelocity(float circumference){
     int timeDiffRaw = 0;
@@ -33,16 +37,24 @@ int calculateVelocity(float circumference){
     velocity = circumference * timeDiff;
     return velocity;
 }
+
+
+
 int main() {
     float circumference;
     int velocity;
 
     circumference = M_PI * 0.6604; //26" in metres
     t.start();
-    button.rise(&recordTime);  // attach the address of the flip function to the rising edge
+    button.rise(&changeFlag);  // attach the address of the flip function to the rising edge
     
     
     while(1) {           // wait around, interrupts will interrupt this!
+        if (timeFlag == true){
+            recordTime();
+            timeFlag = false;
+        }
         velocity = calculateVelocity(circumference); //calculates velocity in m/s
+        
     }
 }
