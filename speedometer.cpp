@@ -1,6 +1,4 @@
 #include "mbed.h"
-#include "GD2.h"
-#include "stdio.h"
 #define M_PI 3.14159265358979323846
 //initialising inputs
 InterruptIn button(PTD7);
@@ -10,7 +8,7 @@ DigitalIn level4(PTC4);
 DigitalIn level3(PTC3);
 DigitalIn level2(PTC0);
 DigitalIn level1(PTC7);
-GDClass GD(PTD2,PTD3,PTD1,PTD5,PTD0); //mosi,miso,sck,gd,sd
+GDClass GD(p5,p6,p7,p8,p9);
 
 //initialising global variables
 Timer t;
@@ -61,11 +59,11 @@ int main() {
     //calculating circumference at start so it doesnt need to be recalculated every loop as floating point multiplications are computationally intensive
     circumference = M_PI * 0.6604; //26" in metres
     t.start();
-    button.rise(&changeFlag);  // attach the address of the flip function to the rising edge
+    button.fall(&changeFlag);  // attach the address of the flip function to the rising edge
     
     
     while(1) {   
-        GD.ClearColorRGB(0x103000);
+        GD.ClearColorRGB(0x000000); //black background
         GD.Clear();   //screen has to always be cleared before drawing a new one
         
         if (timeFlag == true){
@@ -75,41 +73,57 @@ int main() {
         velocity = calculateVelocity(circumference); //calculates velocity in m/s
         
         sprintf(screend,"%d",velocity); //casts integer velocity to string
-        GD.cmd_text(70, 136, 31, OPT_CENTER, screend); //writes velocity on screen
-        GD.cmd_text(120, 142, 28, OPT_CENTER, "m/s"); //appends the m/s beside it in a smaller font
+        GD.cmd_text(60, 136, 31, OPT_CENTER, screend); //writes velocity on screen
+        GD.cmd_text(180, 136, 28, OPT_CENTER, "m/s"); //appends the m/s beside it in a smaller font
+        
+        
+        
+        
         
         
         //draws empty battery symbol
         GD.Begin(RECTS);
-        GD.Vertex2ii(298,198); //larger battery section
-        GD.Vertex2ii(422,252);
-        GD.Vertex2ii(423,213); //wee knobbly thing at the front
-        GD.Vertex2ii(430,235);
+        
+        GD.ColorRGB(0x0D3D56); //indigo screen               also 0x0C374D - darker indigo       0x093145 - darkest indigo
+        GD.Vertex2ii(4,4); //screen
+        GD.Vertex2ii(476,268);
+        
+        GD.ColorRGB(0x000000); //black line
+        GD.Vertex2ii(238,4); //top to bottom line 
+        GD.Vertex2ii(242,268);
+        GD.Vertex2ii(242,134); //battery outline
+        GD.Vertex2ii(476,138);
+        
+        
+        GD.Vertex2ii(299,199); //larger battery section
+        GD.Vertex2ii(421,251);
+        GD.Vertex2ii(421,215); //wee knobbly thing at the front
+        GD.Vertex2ii(421,235);
         
         
         
-        if(level4 == 1){
+        if(level4 == 0){
             //draws rectange for when battery is full capacity
             GD.Begin(RECTS);
             GD.ColorRGB(0x4cc417); //sets rectangle to apple green colour
-            GD.Vertex2ii(395,200);
+            GD.Vertex2ii(391,200);
             GD.Vertex2ii(420,250);
         }
-        if(level3 == 1){
+        if(level3 == 0){
             //will draw the block when battery capacity at 75%
             GD.Begin(RECTS);
             GD.ColorRGB(0x4cc417); 
-            GD.Vertex2ii(365,200);
+            GD.Vertex2ii(361,200);
             GD.Vertex2ii(390,250);
         }
-        if(level2 == 1){
+        if(level2 == 0){
             //will draw block when battery at 50%
             GD.Begin(RECTS);
             GD.ColorRGB(0x4cc417); 
-            GD.Vertex2ii(335,200);
+            GD.Vertex2ii(331,200);
             GD.Vertex2ii(360,250);
         }
-        if(level1 == 1){
+        if(level1 == 0){
             //will draw block at 25%
             GD.Begin(RECTS);
             GD.ColorRGB(0x4cc417); 
