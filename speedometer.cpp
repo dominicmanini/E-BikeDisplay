@@ -1,4 +1,6 @@
 #include "mbed.h"
+#include "GD2.h"
+#include "stdio.h"
 #define M_PI 3.14159265358979323846
 //initialising inputs
 InterruptIn button(PTD7);
@@ -8,7 +10,7 @@ DigitalIn level4(PTC4);
 DigitalIn level3(PTC3);
 DigitalIn level2(PTC0);
 DigitalIn level1(PTC7);
-GDClass GD(p5,p6,p7,p8,p9);
+GDClass GD(PTD2,PTD3,PTD1,PTD5,PTD0); //mosi,miso,sck,gd,sd
 
 //initialising global variables
 Timer t;
@@ -73,8 +75,8 @@ int main() {
         velocity = calculateVelocity(circumference); //calculates velocity in m/s
         
         sprintf(screend,"%d",velocity); //casts integer velocity to string
-        GD.cmd_text(60, 136, 31, OPT_CENTER, screend); //writes velocity on screen
-        GD.cmd_text(180, 136, 28, OPT_CENTER, "m/s"); //appends the m/s beside it in a smaller font
+        GD.cmd_text(70, 136, 31, OPT_CENTER, screend); //writes velocity on screen
+        GD.cmd_text(120, 142, 28, OPT_CENTER, "m/s"); //appends the m/s beside it in a smaller font
         
         
         
@@ -106,21 +108,21 @@ int main() {
             //draws rectange for when battery is full capacity
             GD.Begin(RECTS);
             GD.ColorRGB(0x4cc417); //sets rectangle to apple green colour
-            GD.Vertex2ii(391,200);
+            GD.Vertex2ii(395,200);
             GD.Vertex2ii(420,250);
         }
         if(level3 == 0){
             //will draw the block when battery capacity at 75%
             GD.Begin(RECTS);
             GD.ColorRGB(0x4cc417); 
-            GD.Vertex2ii(361,200);
+            GD.Vertex2ii(365,200);
             GD.Vertex2ii(390,250);
         }
         if(level2 == 0){
             //will draw block when battery at 50%
             GD.Begin(RECTS);
             GD.ColorRGB(0x4cc417); 
-            GD.Vertex2ii(331,200);
+            GD.Vertex2ii(335,200);
             GD.Vertex2ii(360,250);
         }
         if(level1 == 0){
