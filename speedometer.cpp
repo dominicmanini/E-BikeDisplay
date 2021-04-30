@@ -1,5 +1,4 @@
-#include "mbed.h"
-#include "GD2.h"
+
 #include "mbed.h"
 
 #include "GD2.h"
@@ -11,6 +10,8 @@
 //initialising inputs
 
 InterruptIn button(PTD7);
+
+AnalogIn strainInput(PTE30);
 
 DigitalOut led(LED1);
 
@@ -38,6 +39,8 @@ int time2 = 0;
 
 bool timeFlag = false;
 
+float strain = 0.0;
+
 
 
 //used to register the time when the magnet passes hall effect sensor
@@ -48,7 +51,7 @@ void recordTime() {
 
     time1 = t.read_ms();
 
-   
+    
 
     if (time1 > 1620000){  //As timer can't go over roughly 34 minutes we reset it
 
@@ -67,10 +70,9 @@ void recordTime() {
 }
 
 
-
 //called in interrupt so MC knows magnet has passed hall effect
 
-void changeFlag(){
+void changeFlag(){ 
 
     timeFlag = true;
 
@@ -88,7 +90,7 @@ int calculateVelocity(float circumference){
 
     int velocity;    
 
-   
+    
 
     timeDiffRaw = time1 - time2;
 
@@ -112,6 +114,8 @@ int main() {
     int velocity;
 
     char screend[2];
+    
+    char straindd[4];
 
 
 
@@ -123,17 +127,17 @@ int main() {
 
     button.fall(&changeFlag);  // attach the address of the flip function to the rising edge
 
-   
+    
 
-   
+    
 
-    while(1) {  
+    while(1) {   
 
         GD.ClearColorRGB(0x000000); //black background
 
         GD.Clear();   //screen has to always be cleared before drawing a new one
 
-       
+        
 
         if (timeFlag == true){
 
@@ -142,12 +146,17 @@ int main() {
             timeFlag = false;
 
         }
-       
+        
+
+        
+        
+        
+        
         //draws empty battery symbol
 
         GD.Begin(RECTS);
 
-       
+        
 
         GD.ColorRGB(0x0D3D56); //indigo screen               also 0x0C374D - darker indigo       0x093145 - darkest indigo
 
@@ -155,11 +164,11 @@ int main() {
 
         GD.Vertex2ii(476,268);
 
-       
+        
 
         GD.ColorRGB(0x000000); //black line
 
-        GD.Vertex2ii(238,4); //top to bottom line
+        GD.Vertex2ii(238,4); //top to bottom line 
 
         GD.Vertex2ii(242,268);
 
@@ -167,7 +176,7 @@ int main() {
 
         GD.Vertex2ii(476,138);
 
-       
+        
 
         GD.ColorRGB(0xffffff);
 
@@ -179,10 +188,21 @@ int main() {
 
         GD.Vertex2ii(430,215);
 
+        //strain stuff
+        
+        //strain = strainInput.read();
+        
+        sprintf(straindd,"%f",strain); //casts integer strain to string
+
+        GD.cmd_text(350, 70, 31, OPT_CENTER, straindd); //writes strain on screen
+
+
+
+
 
         velocity = calculateVelocity(circumference); //calculates velocity in m/s
 
-       
+        
 
         sprintf(screend,"%d",velocity); //casts integer velocity to string
 
@@ -190,7 +210,6 @@ int main() {
 
         GD.cmd_text(120, 142, 28, OPT_CENTER, "m/s"); //appends the m/s beside it in a smaller font
 
-       
 
         if(level4 == 0){
 
@@ -212,7 +231,7 @@ int main() {
 
             GD.Begin(RECTS);
 
-            GD.ColorRGB(0x4cc417);
+            GD.ColorRGB(0x4cc417); 
 
             GD.Vertex2ii(365,180);
 
@@ -226,7 +245,7 @@ int main() {
 
             GD.Begin(RECTS);
 
-            GD.ColorRGB(0x4cc417);
+            GD.ColorRGB(0x4cc417); 
 
             GD.Vertex2ii(335,180);
 
@@ -240,7 +259,7 @@ int main() {
 
             GD.Begin(RECTS);
 
-            GD.ColorRGB(0x4cc417);
+            GD.ColorRGB(0x4cc417); 
 
             GD.Vertex2ii(300,180);
 
@@ -248,7 +267,7 @@ int main() {
 
         }
 
- 
+      
 
         GD.swap(); //draws the image
 
