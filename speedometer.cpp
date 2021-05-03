@@ -10,20 +10,18 @@
 //initialising inputs
 
 InterruptIn button(PTD7);
-
-AnalogIn strainInput(PTE30);
-
+AnalogIn strainInput(PTB0);
+AnalogOut motorOutput(PTE30);
 DigitalOut led(LED1);
-
 DigitalOut flash(LED4);
-
 DigitalIn level4(PTC4);
-
 DigitalIn level3(PTC3);
-
 DigitalIn level2(PTC0);
-
 DigitalIn level1(PTC7);
+
+DigitalIn noSweatButton(PTC16);   //
+DigitalIn sweatButton(PTC13);     //pin numbers subject to change
+DigitalIn bigSweatButton(PTC12);  //
 
 GDClass GD(PTD2,PTD3,PTD1,PTD5,PTD0); //mosi,miso,sck,gd,sd
 
@@ -39,8 +37,35 @@ int time2 = 0;
 
 bool timeFlag = false;
 
-float strain = 0.0;
+float strain = 0.0;  //input strain to be displayed on screen 
 
+float threshold1 = 0.2;  //represents percentage of input i.e. 25% of input value
+float threshold2 = 0.4;   //also represents thresholding for strain input
+float threshold3 = 0.6;
+float threshold4 = 0.8;
+float threshold5 = 1.0;
+
+bool noSweatFlag = false;
+bool sweatFlag = false;
+bool bigSweatFlag = true;
+
+void setNoSweat();{
+    sweatFlag = false;
+    bigSweatFlag = false;
+    noSweatFlag = true;
+}
+
+void setSweat();{
+    noSweatFlag = false;
+    bigSweatFlag = false;
+    sweatFlag = true;
+}
+
+void setBigSweat();{
+    sweatFlag = false;
+    noSweatFlag = false;
+    bigSweatFlag = true;
+}
 
 
 //used to register the time when the magnet passes hall effect sensor
@@ -126,6 +151,10 @@ int main() {
     t.start();
 
     button.fall(&changeFlag);  // attach the address of the flip function to the rising edge
+    
+    noSweatButton.fall(&setNoSweat);        //sets up interrupts so that flag will switch
+    sweatButton.fall(&setSweat);            //when button is pressed to designated mode
+    bigSweatButton.fall(&setBigSweat);
 
     
 
@@ -147,12 +176,54 @@ int main() {
 
         }
         
-
+        if(noSweatFlag == true){
+            GD.cmd_text(350, 70, 31, OPT_CENTER, "NO SWEAT"); //writes strain on screen
+            if(strainInput > 0.0 && strainInput <= threshold1){
+                motorOutput.write(0.0);
+            }
+            else if (strainInput > threshold1 && strainInput <= threshold2){
+                motorOutput.write(0.25); //outputs 25% of motor power
+            }
+            else if (strainInput > threshold2 && strainInput <= threshold3){
+                motorOutput.write(0.5);  //outputs 50% of motor power
+            }
+            else if (strainInput > threshold3 && strainInput <= threshold4){
+                motorOutput.write(0.75);
+            }
+            else if (strainInput > threshold4 && strainInput <= threshold5){
+                motorOutput.write(1.0);
+            }
+        }
         
         
+        else if(sweatFlag == true){
+            GD.cmd_text(350, 70, 31, OPT_CENTER, "SWEAT"); //writes strain on screen
+            if(strainInput > 0.0 && strainInput <= threshold2){
+                motorOutput.write(0.0);
+            }
+            else if (strainInput > threshold2 && strainInput <= threshold3){
+                motorOutput.write(0.25);  
+            }
+            else if (strainInput > threshold3 && strainInput <= threshold4){
+                motorOutput.write(0.5);
+            }
+            else if (strainInput > threshold4 && strainInput <= threshold5){
+                motorOutput.write(0.75);
+            }
+        }
+        else{ //basically says if bigSweatFlag == true but also sets this mode as a default for safety reasons
+            GD.cmd_text(350, 70, 31, OPT_CENTER, "BIG SWEAT"); //writes strain on screen
+            if(strainInput > 0.0 && strainInput <= threshold3){
+                motorOutput.write(0.0);
+            }
+            else if (strainInput > threshold3 && strainInput <= threshold4){
+                motorOutput.write(0.25);
+            }
+            else if (strainInput > threshold4 && strainInput <= threshold5){
+                motorOutput.write(0.5);
+            }
+        }
         
-        
-        //draws empty battery symbol
 
         GD.Begin(RECTS);
 
@@ -164,7 +235,7 @@ int main() {
 
         GD.Vertex2ii(476,268);
 
-        
+        //draws empty battery symbol
 
         GD.ColorRGB(0x000000); //black line
 
