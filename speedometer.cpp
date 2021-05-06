@@ -19,9 +19,9 @@ DigitalIn level3(PTC3);
 DigitalIn level2(PTC0);
 DigitalIn level1(PTC7);
 
-DigitalIn noSweatButton(PTC16);   //
-DigitalIn sweatButton(PTC13);     //pin numbers subject to change
-DigitalIn bigSweatButton(PTC12);  //
+InterruptIn noSweatButton(PTC16);   //
+InterruptIn sweatButton(PTC13);     //pin numbers subject to change
+InterruptIn bigSweatButton(PTC12);  //
 
 GDClass GD(PTD2,PTD3,PTD1,PTD5,PTD0); //mosi,miso,sck,gd,sd
 
@@ -49,19 +49,19 @@ bool noSweatFlag = false;
 bool sweatFlag = false;
 bool bigSweatFlag = true;
 
-void setNoSweat();{
+void setNoSweat(){
     sweatFlag = false;
     bigSweatFlag = false;
     noSweatFlag = true;
 }
 
-void setSweat();{
+void setSweat(){
     noSweatFlag = false;
     bigSweatFlag = false;
     sweatFlag = true;
 }
 
-void setBigSweat();{
+void setBigSweat(){
     sweatFlag = false;
     noSweatFlag = false;
     bigSweatFlag = true;
@@ -341,7 +341,5 @@ int main() {
       
 
         GD.swap(); //draws the image
-
     }
-
 }
