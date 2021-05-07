@@ -10,7 +10,7 @@
 
 InterruptIn button(PTD7);
 
-AnalogIn strainInput(PTE30);
+AnalogIn strainInput(PTB0);
 
 DigitalOut led(LED1);
 
