@@ -189,7 +189,7 @@ int main() {
 
         //strain stuff
         
-        //strain = strainInput.read();
+        strain = strainInput.read();
         
         sprintf(straindd,"%f",strain); //casts integer strain to string
 
