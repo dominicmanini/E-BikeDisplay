@@ -1,4 +1,3 @@
-
 #include "mbed.h"
 
 #include "GD2.h"
@@ -176,53 +175,7 @@ int main() {
 
         }
         
-        if(noSweatFlag == true){
-            GD.cmd_text(350, 70, 31, OPT_CENTER, "NO SWEAT"); //writes strain on screen
-            if(strainInput > 0.0 && strainInput <= threshold1){
-                motorOutput.write(0.0);
-            }
-            else if (strainInput > threshold1 && strainInput <= threshold2){
-                motorOutput.write(0.25); //outputs 25% of motor power
-            }
-            else if (strainInput > threshold2 && strainInput <= threshold3){
-                motorOutput.write(0.5);  //outputs 50% of motor power
-            }
-            else if (strainInput > threshold3 && strainInput <= threshold4){
-                motorOutput.write(0.75);
-            }
-            else if (strainInput > threshold4 && strainInput <= threshold5){
-                motorOutput.write(1.0);
-            }
-        }
         
-        
-        else if(sweatFlag == true){
-            GD.cmd_text(350, 70, 31, OPT_CENTER, "SWEAT"); //writes strain on screen
-            if(strainInput > 0.0 && strainInput <= threshold2){
-                motorOutput.write(0.0);
-            }
-            else if (strainInput > threshold2 && strainInput <= threshold3){
-                motorOutput.write(0.25);  
-            }
-            else if (strainInput > threshold3 && strainInput <= threshold4){
-                motorOutput.write(0.5);
-            }
-            else if (strainInput > threshold4 && strainInput <= threshold5){
-                motorOutput.write(0.75);
-            }
-        }
-        else{ //basically says if bigSweatFlag == true but also sets this mode as a default for safety reasons
-            GD.cmd_text(350, 70, 31, OPT_CENTER, "BIG SWEAT"); //writes strain on screen
-            if(strainInput > 0.0 && strainInput <= threshold3){
-                motorOutput.write(0.0);
-            }
-            else if (strainInput > threshold3 && strainInput <= threshold4){
-                motorOutput.write(0.25);
-            }
-            else if (strainInput > threshold4 && strainInput <= threshold5){
-                motorOutput.write(0.5);
-            }
-        }
         
 
         GD.Begin(RECTS);
@@ -263,9 +216,9 @@ int main() {
         
         //strain = strainInput.read();
         
-        sprintf(straindd,"%f",strain); //casts integer strain to string
+        //sprintf(straindd,"%f",strain); //casts integer strain to string
 
-        GD.cmd_text(350, 70, 31, OPT_CENTER, straindd); //writes strain on screen
+        //GD.cmd_text(350, 70, 31, OPT_CENTER, straindd); //writes strain on screen
 
 
 
@@ -337,7 +290,53 @@ int main() {
             GD.Vertex2ii(330,230);
 
         }
-
+        if(noSweatFlag == true){
+            GD.cmd_text(355, 70, 31, OPT_CENTER, "NO SWEAT"); //writes strain on screen
+            if(strainInput > 0.0 && strainInput <= threshold1){
+                motorOutput.write(0.0);
+            }
+            else if (strainInput > threshold1 && strainInput <= threshold2){
+                motorOutput.write(0.25); //outputs 25% of motor power
+            }
+            else if (strainInput > threshold2 && strainInput <= threshold3){
+                motorOutput.write(0.5);  //outputs 50% of motor power
+            }
+            else if (strainInput > threshold3 && strainInput <= threshold4){
+                motorOutput.write(0.75);
+            }
+            else if (strainInput > threshold4 && strainInput <= threshold5){
+                motorOutput.write(1.0);
+            }
+        }
+        
+        
+        else if(sweatFlag == true){
+            GD.cmd_text(355, 70, 31, OPT_CENTER, "SWEAT"); //writes strain on screen
+            if(strainInput > 0.0 && strainInput <= threshold2){
+                motorOutput.write(0.0);
+            }
+            else if (strainInput > threshold2 && strainInput <= threshold3){
+                motorOutput.write(0.25);  
+            }
+            else if (strainInput > threshold3 && strainInput <= threshold4){
+                motorOutput.write(0.5);
+            }
+            else if (strainInput > threshold4 && strainInput <= threshold5){
+                motorOutput.write(0.75);
+            }
+        }
+        else{ //basically says if bigSweatFlag == true but also sets this mode as a default for safety reasons
+            GD.cmd_text(355, 70, 31, OPT_CENTER, "BIG SWEAT"); //writes strain on screen
+            if(strainInput > 0.0 && strainInput <= threshold3){
+                motorOutput.write(0.0);
+            }
+            else if (strainInput > threshold3 && strainInput <= threshold4){
+                motorOutput.write(0.25);
+            }
+            else if (strainInput > threshold4 && strainInput <= threshold5){
+                motorOutput.write(0.5);
+            }
+        }
       
 
         GD.swap(); //draws the image
