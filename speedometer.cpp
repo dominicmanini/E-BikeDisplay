@@ -19,9 +19,9 @@ DigitalIn level3(PTC3);
 DigitalIn level2(PTC0);
 DigitalIn level1(PTC7);
 
-InterruptIn noSweatButton(PTC16);   //
-InterruptIn sweatButton(PTC13);     //pin numbers subject to change
-InterruptIn bigSweatButton(PTC12);  //
+InterruptIn noSweatButton(PTA5);   //
+InterruptIn sweatButton(PTA4);     //pin numbers subject to change
+InterruptIn bigSweatButton(PTA12);  //
 
 GDClass GD(PTD2,PTD3,PTD1,PTD5,PTD0); //mosi,miso,sck,gd,sd
 
