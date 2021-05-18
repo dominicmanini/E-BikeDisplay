@@ -278,7 +278,7 @@ int main() {
 
         }
         if(noSweatFlag == true){
-            GD.cmd_text(355, 70, 31, OPT_CENTER, "NO SWEAT"); //writes strain on screen
+            GD.cmd_text(355, 70, 31, OPT_CENTER, "NO SWEAT"); //writes mode on screen
             if(strainInput > 0.0 && strainInput <= threshold1){
                 motorOutput.write(0.0);
             }
@@ -298,7 +298,7 @@ int main() {
         
         
         else if(sweatFlag == true){
-            GD.cmd_text(355, 70, 31, OPT_CENTER, "SWEAT"); //writes strain on screen
+            GD.cmd_text(355, 70, 31, OPT_CENTER, "SWEAT"); //writes mode on screen
             if(strainInput > 0.0 && strainInput <= threshold2){
                 motorOutput.write(0.0);
             }
@@ -312,8 +312,8 @@ int main() {
                 motorOutput.write(0.75);
             }
         }
-        else{ //basically says if bigSweatFlag == true but also sets this mode as a default for safety reasons
-            GD.cmd_text(355, 70, 31, OPT_CENTER, "BIG SWEAT"); //writes strain on screen
+        else if(bigSweatFlag == true){ 
+            GD.cmd_text(355, 70, 31, OPT_CENTER, "BIG SWEAT"); //writes mode on screen
             if(strainInput > 0.0 && strainInput <= threshold3){
                 motorOutput.write(0.0);
             }
@@ -324,7 +324,9 @@ int main() {
                 motorOutput.write(0.5);
             }
         }
-      
+      else{
+          motorOutput.write(0.0); //by default sets motor to be off for safety reasons until a mode is selected
+      }
 
         GD.swap(); //draws the image
     }
