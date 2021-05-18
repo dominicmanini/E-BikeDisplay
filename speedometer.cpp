@@ -32,7 +32,7 @@ Timer t;
 
 int time1 = 0;
 
-int time2 = 0;
+int timeOut = 0;
 
 bool timeFlag = false;
 
@@ -46,7 +46,7 @@ float threshold5 = 1.0;
 
 bool noSweatFlag = false;
 bool sweatFlag = false;
-bool bigSweatFlag = true;
+bool bigSweatFlag = false;
 
 void setNoSweat(){
     sweatFlag = false;
@@ -71,23 +71,10 @@ void setBigSweat(){
 
 void recordTime() {
 
-    time2 = time1;
-
-    time1 = t.read_ms();
-
-    
-
-    if (time1 > 1620000){  //As timer can't go over roughly 34 minutes we reset it
-
-        t.stop();
-
-        t.reset();
-
-        t.start();
-
-        time2 = 0;
-
+        t.stop();  //reset clock everytime to establish timeouts and so internal timer doesn't overflow
         time1 = t.read_ms();
+        t.reset();
+        t.start();
 
     }
 
@@ -108,18 +95,10 @@ void changeFlag(){
 
 int calculateVelocity(float circumference){
 
-    int timeDiffRaw = 0;
-
     float timeDiff;
-
     int velocity;    
 
-    
-
-    timeDiffRaw = time1 - time2;
-
-    timeDiff = timeDiffRaw/1000.0;
-
+    timeDiff = time1/1000.0;
     velocity = circumference / timeDiff;
 
     return velocity;
@@ -129,7 +108,7 @@ int calculateVelocity(float circumference){
 
 int main() {
 
-    //initialising variables
+    //initialising variables and GD screen
 
     GD.begin(~GD_STORAGE);
 
@@ -137,15 +116,13 @@ int main() {
 
     int velocity;
 
-    char screend[2];
+    char screend[2]; //used to display the velocity text on screen
     
-    char straindd[4];
-
-
+    
 
     //calculating circumference at start so it doesnt need to be recalculated every loop as floating point multiplications are computationally intensive
 
-    circumference = M_PI * 0.6604; //26" in metres
+    circumference = M_PI * 0.6604; //26" in metres using circumference = pi* diameter. Circumference = 2.075 roughly
 
     t.start();
 
@@ -155,8 +132,26 @@ int main() {
     sweatButton.fall(&setSweat);            //when button is pressed to designated mode
     bigSweatButton.fall(&setBigSweat);
 
-    
 
+    
+    
+    while(bigSweatFlag == false && noSweatFlag == false && sweatFlag == false){
+        GD.ClearColorRGB(0x0D3D56); //indigo background
+        GD.Clear();   //screen has to always be cleared before drawing a new one
+        
+        GD.ColorRGB(0xffffff);
+        GD.cmd_text(170, 70, 27, OPT_CENTER, "TDP4 Team 4 Presents"); //writes out splashscreen information
+        GD.cmd_text(235, 100, 25, OPT_CENTER, "the"); 
+        GD.cmd_text(120, 136, 31, OPT_CENTER, "Wheely Good Bike Kit"); 
+        GD.cmd_text(200, 200, 27, OPT_CENTER, "Press Button to Start"); 
+        GD.cmd_text(50, 90, 25, OPT_CENTER, "Big Sweat"); //provides button positional information
+        GD.cmd_text(50, 170, 25, OPT_CENTER, "Sweat"); 
+        GD.cmd_text(50, 250, 25, OPT_CENTER, "No Sweat"); 
+        
+        GD.swap(); //draws the image
+    }
+    
+    
     
 
     while(1) {   
@@ -167,10 +162,8 @@ int main() {
 
         
 
-        if (timeFlag == true){
-
+        if (timeFlag == true){       //records the time the nearest time after the hall effect sensor has been triggered
             recordTime();
-
             timeFlag = false;
 
         }
@@ -212,25 +205,19 @@ int main() {
 
         GD.Vertex2ii(430,215);
 
-        //strain stuff
-        
-        //strain = strainInput.read();
-        
-        //sprintf(straindd,"%f",strain); //casts integer strain to string
-
-        //GD.cmd_text(350, 70, 31, OPT_CENTER, straindd); //writes strain on screen
-
-
-
-
-
-        velocity = calculateVelocity(circumference); //calculates velocity in m/s
 
         
-
-        sprintf(screend,"%d",velocity); //casts integer velocity to string
-
-        GD.cmd_text(70, 136, 31, OPT_CENTER, screend); //writes velocity on screen
+        
+        
+        timeOut = t.read_ms();
+        if (timeOut > 3000){ //if timeout is greater than 3 seconds then display 0
+            GD.cmd_text(70, 136, 31, OPT_CENTER, "0"); //writes 0 velocity on screen
+        }
+        else{
+            velocity = calculateVelocity(circumference); //calculates velocity in m/s
+            sprintf(screend,"%d",velocity); //casts integer velocity to string
+            GD.cmd_text(70, 136, 31, OPT_CENTER, screend); //writes velocity on screen
+        }
 
         GD.cmd_text(120, 142, 28, OPT_CENTER, "m/s"); //appends the m/s beside it in a smaller font
 
