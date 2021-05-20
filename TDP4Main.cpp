@@ -71,13 +71,11 @@ void setBigSweat(){
 
 void recordTime() {
 
-        t.stop();  //reset clock everytime to establish timeouts and so internal timer doesn't overflow
-        time1 = t.read_ms();
-        t.reset();
-        t.start();
-
-    }
-
+    t.stop();  //reset clock everytime to establish timeouts and so internal timer doesn't overflow
+    time1 = t.read_ms();
+    t.reset();
+    t.start();
+    
 }
 
 
