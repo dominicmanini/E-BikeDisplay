@@ -12,16 +12,15 @@ InterruptIn button(PTD7);
 
 AnalogIn strainInput(PTB0);
 
-DigitalOut led(LED1);
+DigitalIn noSweatButton(PTA5);   //
+DigitalIn sweatButton(PTA4);     //pin numbers subject to change
+DigitalIn bigSweatButton(PTA12);  //
 
-DigitalOut flash(LED4);
+AnalogOut motorOutput(PTE30);
 
 DigitalIn level4(PTC4);
-
 DigitalIn level3(PTC3);
-
 DigitalIn level2(PTC0);
-
 DigitalIn level1(PTC7);
 
 GDClass GD(PTD2,PTD3,PTD1,PTD5,PTD0); //mosi,miso,sck,gd,sd
@@ -147,7 +146,18 @@ int main() {
         }
         
 
-        
+        if(noSweatButton == 1){
+            motorOutput.write(0.25);
+        }
+        else if(sweatButton == 1){
+            motorOutput.write(0.75);
+        }
+        else if(bigSweatButton == 1){
+            motorOutput.write(1.0);
+        }
+        else{
+            motorOutput.write(0.0);
+        }
         
         
         
