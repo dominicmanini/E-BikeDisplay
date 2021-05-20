@@ -130,202 +130,197 @@ int main() {
     sweatButton.fall(&setSweat);            //when button is pressed to designated mode
     bigSweatButton.fall(&setBigSweat);
 
-
-    
-    
-    while(bigSweatFlag == false && noSweatFlag == false && sweatFlag == false){
-        GD.ClearColorRGB(0x0D3D56); //indigo background
-        GD.Clear();   //screen has to always be cleared before drawing a new one
-        
-        GD.ColorRGB(0xffffff);
-        GD.cmd_text(170, 70, 29, OPT_CENTER, "TDP4 Team 4 Presents"); //writes out splashscreen information
-        GD.cmd_text(235, 100, 27, OPT_CENTER, "the"); 
-        GD.cmd_text(120, 136, 31, OPT_CENTER, "Wheely Good Bike Kit"); 
-        GD.cmd_text(200, 200, 29, OPT_CENTER, "Press Button to Start"); 
-        GD.cmd_text(50, 90, 28, OPT_CENTER, "Big Sweat"); //provides button positional information
-        GD.cmd_text(50, 170, 28, OPT_CENTER, "Sweat"); 
-        GD.cmd_text(50, 250, 28, OPT_CENTER, "No Sweat"); 
-        
-        GD.swap(); //draws the image
-    }
-    
-    
-    
-
     while(1) {   
-
-        GD.ClearColorRGB(0x000000); //black background
-
-        GD.Clear();   //screen has to always be cleared before drawing a new one
-
+        //conditional to display startup screen or to run main code
+        if(bigSweatFlag == false && noSweatFlag == false && sweatFlag == false){
+            GD.ClearColorRGB(0x0D3D56); //indigo background
+            GD.Clear();   //screen has to always be cleared before drawing a new one
         
-
-        if (timeFlag == true){       //records the time the nearest time after the hall effect sensor has been triggered
-            recordTime();
-            timeFlag = false;
-
-        }
-        
-        
-        
-
-        GD.Begin(RECTS);
-
-        
-
-        GD.ColorRGB(0x0D3D56); //indigo screen               also 0x0C374D - darker indigo       0x093145 - darkest indigo
-
-        GD.Vertex2ii(4,4); //screen
-
-        GD.Vertex2ii(476,268);
-
-        //draws empty battery symbol
-
-        GD.ColorRGB(0x000000); //black line
-
-        GD.Vertex2ii(238,4); //top to bottom line 
-
-        GD.Vertex2ii(242,268);
-
-        GD.Vertex2ii(242,134); //battery outline
-
-        GD.Vertex2ii(476,138);
-
-        
-
-        GD.ColorRGB(0xffffff);
-
-        GD.Vertex2ii(298,178); //larger battery section
-
-        GD.Vertex2ii(422,232);
-
-        GD.Vertex2ii(423,193); //wee knobbly thing at the front
-
-        GD.Vertex2ii(430,215);
-
-
-        
-        
-        
-        timeOut = t.read_ms();
-        if (timeOut > 3000){ //if timeout is greater than 3 seconds then display 0
-            GD.cmd_text(70, 136, 31, OPT_CENTER, "0"); //writes 0 velocity on screen
+            GD.ColorRGB(0xffffff);
+            GD.cmd_text(170, 70, 29, OPT_CENTER, "TDP4 Team 4 Presents"); //writes out splashscreen information
+            GD.cmd_text(235, 100, 27, OPT_CENTER, "the"); 
+            GD.cmd_text(120, 136, 31, OPT_CENTER, "Wheely Good Bike Kit"); 
+            GD.cmd_text(200, 200, 29, OPT_CENTER, "Press Button to Start"); 
+            GD.cmd_text(400, 90, 28, OPT_CENTER, "Big Sweat"); //provides button positional information
+            GD.cmd_text(430, 170, 28, OPT_CENTER, "Sweat"); 
+            GD.cmd_text(400, 250, 28, OPT_CENTER, "No Sweat"); 
+            
+            motorOutput.write(0.0); //by default sets motor to be off for safety reasons until a mode is selected
+            
         }
         else{
-            velocity = calculateVelocity(circumference); //calculates velocity in m/s
-            sprintf(screend,"%d",velocity); //casts integer velocity to string
-            GD.cmd_text(70, 136, 31, OPT_CENTER, screend); //writes velocity on screen
-        }
+            GD.ClearColorRGB(0x000000); //black background
 
-        GD.cmd_text(120, 142, 28, OPT_CENTER, "m/s"); //appends the m/s beside it in a smaller font
+            GD.Clear();   //screen has to always be cleared before drawing a new one
 
-
-        if(level4 == 0){
-
-            //draws rectange for when battery is full capacity
-
-            GD.Begin(RECTS);
-
-            GD.ColorRGB(0x4cc417); //sets rectangle to apple green colour
-
-            GD.Vertex2ii(395,180);
-
-            GD.Vertex2ii(420,230);
-
-        }
-
-        if(level3 == 0){
-
-            //will draw the block when battery capacity at 75%
-
-            GD.Begin(RECTS);
-
-            GD.ColorRGB(0x4cc417); 
-
-            GD.Vertex2ii(365,180);
-
-            GD.Vertex2ii(390,230);
-
-        }
-
-        if(level2 == 0){
-
-            //will draw block when battery at 50%
-
-            GD.Begin(RECTS);
-
-            GD.ColorRGB(0x4cc417); 
-
-            GD.Vertex2ii(335,180);
-
-            GD.Vertex2ii(360,230);
-
-        }
-
-        if(level1 == 0){
-
-            //will draw block at 25%
-
-            GD.Begin(RECTS);
-
-            GD.ColorRGB(0x4cc417); 
-
-            GD.Vertex2ii(300,180);
-
-            GD.Vertex2ii(330,230);
-
-        }
-        if(noSweatFlag == true){
-            GD.cmd_text(355, 70, 31, OPT_CENTER, "NO SWEAT"); //writes mode on screen
-            if(strainInput > 0.0 && strainInput <= threshold1){
-                motorOutput.write(0.0);
-            }
-            else if (strainInput > threshold1 && strainInput <= threshold2){
-                motorOutput.write(0.25); //outputs 25% of motor power
-            }
-            else if (strainInput > threshold2 && strainInput <= threshold3){
-                motorOutput.write(0.5);  //outputs 50% of motor power
-            }
-            else if (strainInput > threshold3 && strainInput <= threshold4){
-                motorOutput.write(0.75);
-            }
-            else if (strainInput > threshold4 && strainInput <= threshold5){
-                motorOutput.write(1.0);
-            }
-        }
         
-        
-        else if(sweatFlag == true){
-            GD.cmd_text(355, 70, 31, OPT_CENTER, "SWEAT"); //writes mode on screen
-            if(strainInput > 0.0 && strainInput <= threshold2){
-                motorOutput.write(0.0);
-            }
-            else if (strainInput > threshold2 && strainInput <= threshold3){
-                motorOutput.write(0.25);  
-            }
-            else if (strainInput > threshold3 && strainInput <= threshold4){
-                motorOutput.write(0.5);
-            }
-            else if (strainInput > threshold4 && strainInput <= threshold5){
-                motorOutput.write(0.75);
-            }
-        }
-        else if(bigSweatFlag == true){ 
-            GD.cmd_text(355, 70, 31, OPT_CENTER, "BIG SWEAT"); //writes mode on screen
-            if(strainInput > 0.0 && strainInput <= threshold3){
-                motorOutput.write(0.0);
-            }
-            else if (strainInput > threshold3 && strainInput <= threshold4){
-                motorOutput.write(0.25);
-            }
-            else if (strainInput > threshold4 && strainInput <= threshold5){
-                motorOutput.write(0.5);
-            }
-        }
-      else{
-          motorOutput.write(0.0); //by default sets motor to be off for safety reasons until a mode is selected
-      }
 
-        GD.swap(); //draws the image
+            if (timeFlag == true){       //records the time the nearest time after the hall effect sensor has been triggered
+                recordTime();
+                timeFlag = false;
+
+            }
+            
+            
+            
+    
+            GD.Begin(RECTS);
+    
+            
+    
+            GD.ColorRGB(0x0D3D56); //indigo screen               also 0x0C374D - darker indigo       0x093145 - darkest indigo
+    
+            GD.Vertex2ii(4,4); //screen
+    
+            GD.Vertex2ii(476,268);
+    
+            //draws empty battery symbol
+    
+            GD.ColorRGB(0x000000); //black line
+    
+            GD.Vertex2ii(238,4); //top to bottom line 
+    
+            GD.Vertex2ii(242,268);
+    
+            GD.Vertex2ii(242,134); //battery outline
+    
+            GD.Vertex2ii(476,138);
+    
+            
+    
+            GD.ColorRGB(0xffffff);
+    
+            GD.Vertex2ii(298,178); //larger battery section
+    
+            GD.Vertex2ii(422,232);
+    
+            GD.Vertex2ii(423,193); //wee knobbly thing at the front
+    
+            GD.Vertex2ii(430,215);
+    
+    
+            
+            
+            
+            timeOut = t.read_ms();
+            if (timeOut > 3000){ //if timeout is greater than 3 seconds then display 0
+                GD.cmd_text(70, 136, 31, OPT_CENTER, "0"); //writes 0 velocity on screen
+            }
+            else{
+                velocity = calculateVelocity(circumference); //calculates velocity in m/s
+                sprintf(screend,"%d",velocity); //casts integer velocity to string
+                GD.cmd_text(70, 136, 31, OPT_CENTER, screend); //writes velocity on screen
+            }
+    
+            GD.cmd_text(120, 142, 28, OPT_CENTER, "m/s"); //appends the m/s beside it in a smaller font
+    
+    
+            if(level4 == 0){
+    
+                //draws rectange for when battery is full capacity
+    
+                GD.Begin(RECTS);
+    
+                GD.ColorRGB(0x4cc417); //sets rectangle to apple green colour
+    
+                GD.Vertex2ii(395,180);
+    
+                GD.Vertex2ii(420,230);
+    
+            }
+    
+            if(level3 == 0){
+    
+                //will draw the block when battery capacity at 75%
+    
+                GD.Begin(RECTS);
+    
+                GD.ColorRGB(0x4cc417); 
+    
+                GD.Vertex2ii(365,180);
+    
+                GD.Vertex2ii(390,230);
+    
+            }
+    
+            if(level2 == 0){
+    
+                //will draw block when battery at 50%
+    
+                GD.Begin(RECTS);
+    
+                GD.ColorRGB(0x4cc417); 
+    
+                GD.Vertex2ii(335,180);
+    
+                GD.Vertex2ii(360,230);
+    
+            }
+    
+            if(level1 == 0){
+    
+                //will draw block at 25%
+    
+                GD.Begin(RECTS);
+    
+                GD.ColorRGB(0x4cc417); 
+    
+                GD.Vertex2ii(300,180);
+    
+                GD.Vertex2ii(330,230);
+    
+            }
+            if(noSweatFlag == true){
+                GD.cmd_text(355, 70, 31, OPT_CENTER, "NO SWEAT"); //writes mode on screen
+                if(strainInput > 0.0 && strainInput <= threshold1){
+                    motorOutput.write(0.0);
+                }
+                else if (strainInput > threshold1 && strainInput <= threshold2){
+                    motorOutput.write(0.25); //outputs 25% of motor power
+                }
+                else if (strainInput > threshold2 && strainInput <= threshold3){
+                    motorOutput.write(0.5);  //outputs 50% of motor power
+                }
+                else if (strainInput > threshold3 && strainInput <= threshold4){
+                    motorOutput.write(0.75);
+                }
+                else if (strainInput > threshold4 && strainInput <= threshold5){
+                    motorOutput.write(1.0);
+                }
+            }
+            
+            
+            else if(sweatFlag == true){
+                GD.cmd_text(355, 70, 31, OPT_CENTER, "SWEAT"); //writes mode on screen
+                if(strainInput > 0.0 && strainInput <= threshold2){
+                    motorOutput.write(0.0);
+                }
+                else if (strainInput > threshold2 && strainInput <= threshold3){
+                    motorOutput.write(0.25);  
+                }
+                else if (strainInput > threshold3 && strainInput <= threshold4){
+                    motorOutput.write(0.5);
+                }
+                else if (strainInput > threshold4 && strainInput <= threshold5){
+                    motorOutput.write(0.75);
+                }
+            }
+            else if(bigSweatFlag == true){ 
+                GD.cmd_text(355, 70, 31, OPT_CENTER, "BIG SWEAT"); //writes mode on screen
+                if(strainInput > 0.0 && strainInput <= threshold3){
+                    motorOutput.write(0.0);
+                }
+                else if (strainInput > threshold3 && strainInput <= threshold4){
+                    motorOutput.write(0.25);
+                }
+                else if (strainInput > threshold4 && strainInput <= threshold5){
+                    motorOutput.write(0.5);
+                }
+            }
+            else{
+              motorOutput.write(0.0); //by default sets motor to be off for safety reasons until a mode is selected
+            } 
+        }
+    GD.swap(); //draws the image
     }
 }
