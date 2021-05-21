@@ -137,13 +137,13 @@ int main() {
             GD.Clear();   //screen has to always be cleared before drawing a new one
         
             GD.ColorRGB(0xffffff);
-            GD.cmd_text(170, 70, 29, OPT_CENTER, "TDP4 Team 4 Presents"); //writes out splashscreen information
-            GD.cmd_text(235, 100, 27, OPT_CENTER, "the"); 
-            GD.cmd_text(120, 136, 31, OPT_CENTER, "Wheely Good Bike Kit"); 
-            GD.cmd_text(200, 200, 29, OPT_CENTER, "Press Button to Start"); 
-            GD.cmd_text(400, 90, 28, OPT_CENTER, "Big Sweat"); //provides button positional information
-            GD.cmd_text(430, 170, 28, OPT_CENTER, "Sweat"); 
-            GD.cmd_text(400, 250, 28, OPT_CENTER, "No Sweat"); 
+            GD.cmd_text(170, 70, 28, OPT_CENTER, "TDP4 Team 4 Presents"); //writes out splashscreen information
+            GD.cmd_text(165, 100, 26, OPT_CENTER, "the"); 
+            GD.cmd_text(180, 136, 30, OPT_CENTER, "Wheely Good Bike Kit"); 
+            GD.cmd_text(170, 200, 29, OPT_CENTER, "Press Button to Start"); 
+            GD.cmd_text(410, 30, 28, OPT_CENTER, "Big Sweat"); //provides button positional information
+            GD.cmd_text(430, 150, 28, OPT_CENTER, "Sweat"); 
+            GD.cmd_text(410, 250, 28, OPT_CENTER, "No Sweat"); 
             
             motorOutput.write(0.0); //by default sets motor to be off for safety reasons until a mode is selected
             
