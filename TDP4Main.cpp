@@ -14,8 +14,8 @@ AnalogOut motorOutput(PTE30);
 DigitalOut led(LED1);
 DigitalOut flash(LED4);
 DigitalIn level4(PTC4);
-DigitalIn level3(PTC3);
-DigitalIn level2(PTC0);
+DigitalIn level3(PTC0);
+DigitalIn level2(PTC3);
 DigitalIn level1(PTC7);
 
 InterruptIn noSweatButton(PTA5);   //
